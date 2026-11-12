@@ -15,6 +15,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stage.css">
+<script src="stage.js" defer></script>
 </head>
 <body>
 
@@ -29,28 +31,24 @@
     </h1>
   </div>
 
-  <figure class="venn" aria-label="NC, HCS, HIS 세 연구실의 교집합 NHH">
-    <div class="orb nc"></div><div class="orb hcs"></div><div class="orb his"></div>
-    <figcaption>
-      <span class="l-nc">NC</span><span class="l-hcs">HCS</span><span class="l-his">HIS</span><b>NHH</b>
-    </figcaption>
-  </figure>
-
   <div class="theme">
-    <ul class="logos" aria-label="참여 연구실">
-      <li><img src="img/kaist.webp" alt="KAIST"><img src="img/nc.png" alt="NC Lab"></li>
-      <li><img src="img/snu.webp" alt="서울대학교"><img src="img/hcs.png" alt="HCS Lab"></li>
-      <li><img src="img/postech.webp" alt="POSTECH"><img src="img/his-lab.png" alt="HIS Lab" class="word"></li>
-    </ul>
     <p class="spectrum">Across the<br>Reality Spectrum</p>
     <p class="sub">From everyday computing to eXtended Reality (XR)</p>
   </div>
 
+  <div class="stage" id="stage" aria-label="연구 주제 3D 쇼케이스"></div>
+
   <dl class="facts">
-    <div><dt>Date</dt><dd>2027.01.14–15 <small>(목–금)</small></dd></div>
-    <div><dt>Venue</dt><dd>서울대학교 138동 6층 민상렬홀</dd></div>
-    <div><dt>Hosted by</dt><dd>서울대학교 HCS 연구실</dd></div>
+    <div><dt>Date</dt><dd>2027.01.14–15</dd><dd class="note">목–금 · 2일간</dd></div>
+    <div><dt>Venue</dt><dd>서울대학교 민상렬홀</dd><dd class="note">138동 6층</dd></div>
+    <div><dt>Hosted by</dt><dd>서울대학교 HCS 연구실</dd><dd class="note">3개 연구실 공동 워크샵</dd></div>
   </dl>
+
+  <ul class="logos" aria-label="참여 연구실">
+    <li><img src="img/kaist.webp" alt="KAIST"><img src="img/nc.png" alt="NC Lab"></li>
+    <li><img src="img/snu.webp" alt="서울대학교"><img src="img/hcs.png" alt="HCS Lab"></li>
+    <li><img src="img/postech.webp" alt="POSTECH"><img src="img/his-lab.png" alt="HIS Lab" class="word"></li>
+  </ul>
 
   <div class="rule"><span>2027.01.14–15</span><i></i><span>Seoul National University</span></div>
 </header>
@@ -114,6 +112,5 @@
   <div class="rule"><span>NHH Workshop 2027</span><i></i><span>Bldg. 138, 6F · SNU</span></div>
 </footer>
 
-<script src="script.js"></script>
 </body>
 </html>
