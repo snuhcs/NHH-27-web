@@ -16,6 +16,12 @@ const ASSETS = [
   { src: 'models/watch.glb', label: 'Care & Health Computing',  yaw: 0.3,  pitch: 0.05, swing: 0.2 },
   { src: 'models/agent.glb', label: 'Human-Centered AI Agents', yaw: 0.3,  pitch: 0.1,  swing: 0.4 },
 ];
+// "I'm Feeling Lucky": swaps the main view to one professor's bust (loaded on first use)
+const BUSTS = [
+  { src: 'models/bust-song.glb',  label: 'Prof. Junehwa Song', yaw: -0.15, pitch: 0.1,  swing: 0.3 },
+  { src: 'models/bust-hwang.glb', label: 'Prof. Inseok Hwang', yaw: 0.3,   pitch: 0.12, swing: 0.3 },
+  { src: 'models/bust-lee.glb',   label: 'Prof. Youngki Lee',  yaw: 0.3,   pitch: 0.1,  swing: 0.3 },
+];
 // 70-level ramp, dense -> sparse. Glyphs are light on dark, so bright surfaces take the dense end.
 const RAMP = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'.';
 const BANDS = 6;                     // brightness bands per depth half -> colour tones
@@ -46,7 +52,7 @@ const makeGeoMat = () => new THREE.ShaderMaterial({
 });
 const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
 const loader = new GLTFLoader().setDRACOLoader(draco);
-const MODEL_V = 4;                    // bump when files in models/ change, so browsers refetch
+const MODEL_V = 5;                    // bump when files in models/ change, so browsers refetch
 const load = src => loader.loadAsync(`${src}?v=${MODEL_V}`).then(g => {
   const m = g.scene;
   m.traverse(o => { if (o.isMesh) { o.geometry.computeVertexNormals(); o.material = shadeMat; } });
@@ -150,24 +156,34 @@ const pose = (v, a, now) => {
 
 // --- DOM ---
 const root = document.getElementById('stage');
-root.innerHTML = '<div class="stage__canvas" role="button" tabindex="0"></div>';
+root.innerHTML = '<div class="stage__canvas" role="button" tabindex="0"></div>'
+  + '<button class="stage__lucky" type="button">I’m Feeling Lucky</button>';
 const canvas = root.querySelector('.stage__canvas');
 const main = makeView(canvas);
-// click / Enter / Space skips to the next topic (plays the scramble-out first)
-const next = () => { if (reduce) go(idx + 1); else if (phase !== 'out') { phase = 'out'; t0 = performance.now(); } };
-canvas.addEventListener('click', next);
-canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); } });
-const models = ASSETS.map(a => load(a.src));
+const cache = new Map();
+const model = a => { if (!cache.has(a)) cache.set(a, load(a.src)); return cache.get(a); };
+ASSETS.forEach(model);
 
 // --- main view state machine ---
-let idx = 0, phase = 'in', t0 = performance.now(), running = true, visible = true, last = 0;
-async function show(i) {
-  const m = await models[i];
-  if (i !== idx) return;
+let idx = 0, cur = ASSETS[0], pending = null, lastBust = -1;
+let phase = 'in', t0 = performance.now(), running = true, visible = true, last = 0;
+async function show(a) {
+  const m = await model(a);
+  if (a !== cur) return;
   main.setModel(m);
-  canvas.setAttribute('aria-label', `연구 주제: ${ASSETS[i].label}. 누르면 다음 주제`);
+  canvas.setAttribute('aria-label', `${a.label}. 누르면 다음 주제`);
 }
-function go(i) { idx = (i + ASSETS.length) % ASSETS.length; phase = 'in'; t0 = performance.now(); show(idx); }
+function play(a) { cur = a; phase = 'in'; t0 = performance.now(); show(a); }
+function go(i) { idx = (i + ASSETS.length) % ASSETS.length; play(ASSETS[idx]); }
+const advance = () => { if (pending) { const a = pending; pending = null; play(a); } else go(idx + 1); };
+// skip ahead: plays the scramble-out first, then advance()
+const next = () => { if (reduce) advance(); else if (phase !== 'out') { phase = 'out'; t0 = performance.now(); } };
+canvas.addEventListener('click', next);
+canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); } });
+root.querySelector('.stage__lucky').addEventListener('click', () => {
+  let k; do k = Math.floor(Math.random() * BUSTS.length); while (k === lastBust);
+  lastBust = k; pending = BUSTS[k]; model(pending); next();
+});
 
 function frame(now) {
   requestAnimationFrame(frame);
@@ -178,9 +194,9 @@ function frame(now) {
   if (!reduce) {
     if (phase === 'in') { p = Math.min(1, dt / T_IN); if (dt > T_IN) { phase = 'hold'; t0 = now; } }
     else if (phase === 'hold') { if (dt > T_HOLD) { phase = 'out'; t0 = now; } }
-    else { p = 1 - Math.min(1, dt / T_OUT); if (dt > T_OUT) { go(idx + 1); return; } }
+    else { p = 1 - Math.min(1, dt / T_OUT); if (dt > T_OUT) { advance(); return; } }
   }
-  pose(main, ASSETS[idx], now);
+  pose(main, cur, now);
   draw(main, p);
 }
 

@@ -7,7 +7,7 @@
   --stage-far-lo: #262c86;  --stage-far-hi: #a9b3ff;
   --stage-noise: #8d98ff;
   --stage-font: 400 7px/8px ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
-  display: grid; min-height: 0;
+  display: grid; min-height: 0; position: relative;
 }
 .stage__canvas { position: relative; min-height: 0; overflow: hidden; cursor: pointer; }
 .stage__canvas:focus-visible { outline: 1px dashed rgba(255, 255, 255, .5); outline-offset: 4px; }
@@ -19,3 +19,9 @@
 .stage__layer.far { color: color-mix(in oklab, var(--stage-far-hi) calc(var(--k) * 100%), var(--stage-far-lo)); }
 .stage__layer.edge { color: var(--stage-edge); font-weight: 700; }
 .stage__layer.noise { color: var(--stage-noise); }
+.stage__lucky {
+  position: absolute; top: 0; right: 0; z-index: 1; padding: 6px 12px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px;
+  background: transparent; color: rgba(255, 255, 255, .75); font: 400 11px/1 ui-monospace, Consolas, Menlo, monospace; letter-spacing: .06em; cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.stage__lucky:hover, .stage__lucky:focus-visible { color: #fff; border-color: #fff; background: rgba(255, 255, 255, .08); outline: none; }
