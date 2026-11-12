@@ -22,12 +22,15 @@ ul, ol { list-style: none; }
   min-height: max(100svh, 680px);
   padding: 24px var(--gutter);
   display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-rows: auto auto 1fr auto auto auto;
   gap: 24px;
   position: relative;
   overflow: hidden;
 }
 .head, .theme, .facts, .poster .rule { position: relative; z-index: 2; }
+.poster > * { grid-column: 1; }
+.poster > .rule:first-child { grid-row: 1; } .head { grid-row: 2; } .theme { grid-row: 4; } .facts { grid-row: 5; } .poster > .rule:last-child { grid-row: 6; }
+.venn { grid-row: 2 / 4; justify-self: end; margin-right: clamp(0px, 6vw, 120px); }
 
 .head h1 { display: grid; gap: 12px; font-weight: 400; }
 .mark { font: 200 clamp(64px, 9vw, 124px)/.9 var(--display); letter-spacing: .01em; }
@@ -41,9 +44,8 @@ ul, ol { list-style: none; }
 
 .logos { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px 28px; margin-bottom: 8px; }
 .logos li { display: flex; align-items: center; gap: 8px; }
-.logos .seal { height: 34px; width: auto; }
-.logos .lab { height: 28px; width: auto; }
-.logos .lab.word { height: 22px; filter: brightness(0); } /* source wordmark is white */
+.logos img { height: 30px; width: auto; display: block; } /* assets trimmed to ink bounds, so equal height = equal optical size */
+.logos .word { filter: brightness(0); } /* source wordmark is white */
 
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
 .facts div { padding: 14px 16px 0 0; min-width: 0; }
@@ -51,22 +53,18 @@ ul, ol { list-style: none; }
 .facts dd { font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .facts small { font-size: 14px; font-weight: 400; color: var(--mute); }
 
-/* ---------- gradient orbs: blurred inset glow makes the soft crescent ---------- */
-.orbs { position: absolute; inset: 0 0 18% 0; pointer-events: none; }
-.orb { position: absolute; aspect-ratio: 1; border-radius: 50%; transition: transform .8s cubic-bezier(.2,.7,.2,1); will-change: transform; }
-.orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: var(--glow); filter: blur(7px); }
-.o1 { /* large, blue-led, opens right */
-  height: 74%; left: 42%; top: 10%;
-  --glow: inset 64px 6px 64px -28px var(--blue), inset 10px 52px 80px -44px var(--pink);
-}
-.o2 { /* medium, pink-led, opens left */
-  height: 48%; left: 26%; top: 44%;
-  --glow: inset -54px 0 54px -24px var(--pink), inset -12px -40px 64px -36px var(--blue);
-}
-.o3 { /* small, opens right */
-  height: 28%; left: 37%; top: 70%;
-  --glow: inset 34px 4px 34px -14px var(--blue), inset 8px 24px 44px -22px var(--pink);
-}
+/* ---------- venn: three labs as gradient rings, NHH at the overlap ---------- */
+.venn { position: relative; z-index: 1; margin-block: 24px 0; align-self: center; height: clamp(220px, 36svh, 380px); aspect-ratio: 1; }
+.orb { position: absolute; width: 62%; aspect-ratio: 1; border-radius: 50%; transition: transform .8s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+.orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: var(--glow); filter: blur(4px); }
+.orb.nc  { left: 19%; top: 0;   --glow: inset 0 0 26px 3px var(--blue); }
+.orb.hcs { left: 0;   top: 34%; --glow: inset 14px 0 26px 3px var(--blue), inset -14px 0 26px 3px var(--pink); }
+.orb.his { left: 38%; top: 34%; --glow: inset 0 0 26px 3px var(--pink); }
+.venn figcaption span { position: absolute; font: 400 12px/1 var(--display); letter-spacing: .14em; }
+.l-nc  { left: 50%; top: -18px; transform: translateX(-50%); color: var(--blue); }
+.l-hcs { left: -6px; bottom: -4px; }
+.l-his { right: -6px; bottom: -4px; color: var(--pink); }
+.venn b { position: absolute; left: 50%; top: 53%; transform: translate(-50%, -50%); font: 400 11px/1 var(--display); letter-spacing: .2em; }
 
 /* ---------- sections ---------- */
 .block { padding: 96px var(--gutter) 0; display: grid; justify-items: center; gap: 16px; }
@@ -111,11 +109,10 @@ ul, ol { list-style: none; }
 /* ---------- small screens ---------- */
 @media (max-width: 720px) {
   .poster { min-height: auto; gap: 20px; }
-  .orbs { position: relative; inset: auto; height: 300px; margin-block: -12px; }
-  .o1 { left: 34%; top: 2%; height: 80%; }
-  .o2 { left: 2%; top: 30%; height: 56%; }
-  .o3 { left: 30%; top: 66%; height: 34%; }
+  .venn { height: 240px; margin-block: 12px; }
   .poster { grid-template-rows: none; }
+  .poster > *, .poster > .rule:first-child, .poster > .rule:last-child { grid-row: auto; }
+  .venn { justify-self: center; margin-right: 0; }
   .theme { justify-self: stretch; justify-items: start; text-align: left; }
   .logos { justify-content: flex-start; gap: 12px 18px; }
   .facts { grid-template-columns: 1fr; }
