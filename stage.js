@@ -3,8 +3,7 @@
 // (1) lit shading -> glyph density, (2) normals+depth -> edges. Edges become directional glyphs,
 // fill is split into colour tones by brightness and depth (see stage.css).
 // The main view cycles research topics with a scramble-in / scramble-out ("dararak") transition
-// (click to skip ahead);
-// small bust views of the three professors float around it.
+// (click to skip ahead).
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
@@ -16,12 +15,6 @@ const ASSETS = [
   { src: 'models/chip.glb',  label: 'On-Device AI',             yaw: 0.7,  pitch: 1.0,  swing: 0.35 },
   { src: 'models/watch.glb', label: 'Care & Health Computing',  yaw: 0.3,  pitch: 0.05, swing: 0.2 },
   { src: 'models/agent.glb', label: 'Human-Centered AI Agents', yaw: 0.3,  pitch: 0.1,  swing: 0.4 },
-];
-// busts sit left / right / left of the main view, so each is turned to face the centre
-const BUSTS = [
-  { src: 'models/bust-song.glb',  name: 'Junehwa Song', lab: 'NC · KAIST',    yaw: -0.15, pitch: 0.1,  swing: 0.25 },
-  { src: 'models/bust-lee.glb',   name: 'Youngki Lee',  lab: 'HCS · SNU',     yaw: -0.45, pitch: 0.1,  swing: 0.25 },
-  { src: 'models/bust-hwang.glb', name: 'Inseok Hwang', lab: 'HIS · POSTECH', yaw: 0.4,   pitch: 0.12, swing: 0.25 },
 ];
 // 70-level ramp, dense -> sparse. Glyphs are light on dark, so bright surfaces take the dense end.
 const RAMP = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'.';
@@ -150,17 +143,14 @@ function draw(v, p) {                                 // p: reveal progress 0..1
   bufs.forEach((buf, i) => { v.layerEls[i].textContent = ascii.decode(buf); });
 }
 
-const pose = (v, a, now, phase = 0) => {
-  v.pivot.rotation.set(a.pitch, a.yaw + (reduce ? 0 : Math.sin(now * 0.0006 + phase) * a.swing), 0);
-  v.pivot.position.y = reduce ? 0 : Math.sin(now * 0.0016 + phase) * 0.04;
+const pose = (v, a, now) => {
+  v.pivot.rotation.set(a.pitch, a.yaw + (reduce ? 0 : Math.sin(now * 0.0006) * a.swing), 0);
+  v.pivot.position.y = reduce ? 0 : Math.sin(now * 0.0016) * 0.04;
 };
 
 // --- DOM ---
 const root = document.getElementById('stage');
-root.innerHTML = '<div class="stage__canvas" role="button" tabindex="0">'
-  + BUSTS.map((b, i) => `<figure class="stage__bust b${i}" aria-hidden="true" hidden><div class="stage__bust-view"></div>`
-    + `<figcaption>${b.name}<span>${b.lab}</span></figcaption></figure>`).join('')
-  + '</div>';
+root.innerHTML = '<div class="stage__canvas" role="button" tabindex="0"></div>';
 const canvas = root.querySelector('.stage__canvas');
 const main = makeView(canvas);
 // click / Enter / Space skips to the next topic (plays the scramble-out first)
@@ -168,12 +158,6 @@ const next = () => { if (reduce) go(idx + 1); else if (phase !== 'out') { phase 
 canvas.addEventListener('click', next);
 canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); } });
 const models = ASSETS.map(a => load(a.src));
-const busts = BUSTS.map((b, i) => {
-  const fig = root.querySelector(`.stage__bust.b${i}`);
-  const v = makeView(fig.querySelector('.stage__bust-view'));
-  load(b.src).then(m => { if (m) { fig.hidden = false; v.measure(); v.setModel(m); } });
-  return v;
-});
 
 // --- main view state machine ---
 let idx = 0, phase = 'in', t0 = performance.now(), running = true, visible = true, last = 0;
@@ -198,7 +182,6 @@ function frame(now) {
   }
   pose(main, ASSETS[idx], now);
   draw(main, p);
-  busts.forEach((v, i) => { if (v.model) { pose(v, BUSTS[i], now, i * 2.1); draw(v, 1); } });
 }
 
 new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(root);

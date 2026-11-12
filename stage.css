@@ -19,16 +19,3 @@
 .stage__layer.far { color: color-mix(in oklab, var(--stage-far-hi) calc(var(--k) * 100%), var(--stage-far-lo)); }
 .stage__layer.edge { color: var(--stage-edge); font-weight: 700; }
 .stage__layer.noise { color: var(--stage-noise); }
-
-/* professor busts: small ASCII views floating around the main one */
-.stage__bust[hidden] { display: none; }
-.stage__bust { position: absolute; z-index: 1; width: 25%; margin: 0; display: grid; justify-items: center; gap: 4px; animation: bust-float 7s ease-in-out infinite alternate; }
-.stage__bust-view { position: relative; width: 100%; aspect-ratio: 4 / 5; }
-.stage__bust .stage__layer { font: 400 4px/5px ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace; }
-.stage__bust figcaption { font: 400 11px/1.3 ui-monospace, Consolas, Menlo, monospace; letter-spacing: .06em; color: var(--stage-edge); text-align: center; }
-.stage__bust figcaption span { display: block; color: rgba(255, 255, 255, .55); }
-.stage__bust.b0 { left: 0; top: 2%; }
-.stage__bust.b1 { right: 0; top: 30%; animation-delay: -2.5s; }
-.stage__bust.b2 { left: 6%; bottom: 2%; animation-delay: -5s; }
-@keyframes bust-float { from { transform: translate(0, -10px); } to { transform: translate(6px, 10px); } }
-@media (prefers-reduced-motion: reduce) { .stage__bust { animation: none; } }
