@@ -1,10 +1,11 @@
 /* ASCII 3D showcase — stacked glyph layers: near/far tone bands, edges, transition noise.
    The host sizes #stage; the glyph canvas fills it above a label/dots row. */
 .stage {
-  /* tones: each layer mixes lo->hi by its --k (0..1 = brightness band); near = cool, far = warm */
+  /* tones: each layer mixes lo->hi by its --k (0..1 = brightness band); near = bright, far = dimmer blue */
   --stage-edge: #ffffff;
   --stage-near-lo: #3c47b8; --stage-near-hi: #ffffff;
-  --stage-far-lo: #7a3f63;  --stage-far-hi: var(--orange, #ffb27a);
+  --stage-far-lo: #262c86;  --stage-far-hi: #a9b3ff;
+  --stage-noise: #8d98ff;
   --stage-far: var(--orange, #ffb27a);
   --stage-font: 400 7px/8px ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
   display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; min-height: 0;
@@ -17,10 +18,23 @@
 .stage__layer.near { color: color-mix(in oklab, var(--stage-near-hi) calc(var(--k) * 100%), var(--stage-near-lo)); }
 .stage__layer.far { color: color-mix(in oklab, var(--stage-far-hi) calc(var(--k) * 100%), var(--stage-far-lo)); }
 .stage__layer.edge { color: var(--stage-edge); font-weight: 700; }
-.stage__layer.noise { color: var(--stage-far); }
+.stage__layer.noise { color: var(--stage-noise); }
 .stage__meta { display: grid; justify-items: center; gap: 10px; }
 .stage__label { margin: 0; font: 400 13px/1 ui-monospace, Consolas, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--stage-edge); min-height: 1em; }
 .stage__dots { display: flex; gap: 8px; }
 .stage__dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .28); cursor: pointer; transition: width .3s, background .3s; }
 .stage__dot[aria-current] { width: 22px; border-radius: 4px; background: var(--stage-far); }
 .stage__dot:focus-visible { outline: 2px solid var(--stage-far); outline-offset: 3px; }
+
+/* professor busts: small ASCII views floating around the main one */
+.stage__bust[hidden] { display: none; }
+.stage__bust { position: absolute; z-index: 1; width: 22%; margin: 0; display: grid; justify-items: center; gap: 4px; animation: bust-float 7s ease-in-out infinite alternate; }
+.stage__bust-view { position: relative; width: 100%; aspect-ratio: 4 / 5; }
+.stage__bust .stage__layer { font: 400 5px/6px ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace; }
+.stage__bust figcaption { font: 400 11px/1.3 ui-monospace, Consolas, Menlo, monospace; letter-spacing: .06em; color: var(--stage-edge); text-align: center; }
+.stage__bust figcaption span { display: block; color: rgba(255, 255, 255, .55); }
+.stage__bust.b0 { left: 0; top: 2%; }
+.stage__bust.b1 { right: 0; top: 30%; animation-delay: -2.5s; }
+.stage__bust.b2 { left: 6%; bottom: 2%; animation-delay: -5s; }
+@keyframes bust-float { from { transform: translate(0, -10px); } to { transform: translate(6px, 10px); } }
+@media (prefers-reduced-motion: reduce) { .stage__bust { animation: none; } }
