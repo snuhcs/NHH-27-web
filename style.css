@@ -36,7 +36,8 @@ ul { list-style: none; }
 .foot { position: relative; z-index: 2; align-self: end; display: grid; justify-items: end; gap: 16px; }
 .foot h2 { font-weight: 200; font-size: clamp(32px, 5vw, 64px); line-height: 1; letter-spacing: .02em; text-align: right; }
 
-.logos { display: flex; align-items: center; gap: 22px; }
+.logos { display: flex; align-items: center; gap: 28px; }
+.logos li { display: flex; align-items: center; gap: 8px; }
 .logos img { height: 36px; width: auto; display: block; }
 .logos img.invert { filter: brightness(0); height: 28px; } /* source logo is white-on-transparent */
 
