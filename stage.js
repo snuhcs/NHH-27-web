@@ -17,10 +17,11 @@ const ASSETS = [
   { src: 'models/watch.glb', label: 'Care & Health Computing',  yaw: 0.3,  pitch: 0.05, swing: 0.2 },
   { src: 'models/agent.glb', label: 'Human-Centered AI Agents', yaw: 0.3,  pitch: 0.1,  swing: 0.4 },
 ];
+// busts sit left / right / left of the main view, so each is turned to face the centre
 const BUSTS = [
-  { src: 'models/bust-song.glb',  name: 'Junehwa Song', lab: 'NC · KAIST',    yaw: 0.45, pitch: 0.05, swing: 0.3 },
-  { src: 'models/bust-lee.glb',   name: 'Youngki Lee',  lab: 'HCS · SNU',     yaw: -0.4, pitch: 0.05, swing: 0.3 },
-  { src: 'models/bust-hwang.glb', name: 'Inseok Hwang', lab: 'HIS · POSTECH', yaw: 0.4,  pitch: 0.05, swing: 0.3 },
+  { src: 'models/bust-song.glb',  name: 'Junehwa Song', lab: 'NC · KAIST',    yaw: -0.15, pitch: 0.1,  swing: 0.25 },
+  { src: 'models/bust-lee.glb',   name: 'Youngki Lee',  lab: 'HCS · SNU',     yaw: -0.45, pitch: 0.1,  swing: 0.25 },
+  { src: 'models/bust-hwang.glb', name: 'Inseok Hwang', lab: 'HIS · POSTECH', yaw: 0.4,   pitch: 0.12, swing: 0.25 },
 ];
 // 70-level ramp, dense -> sparse. Glyphs are light on dark, so bright surfaces take the dense end.
 const RAMP = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'.';
@@ -52,7 +53,7 @@ const makeGeoMat = () => new THREE.ShaderMaterial({
 });
 const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
 const loader = new GLTFLoader().setDRACOLoader(draco);
-const MODEL_V = 3;                    // bump when files in models/ change, so browsers refetch
+const MODEL_V = 4;                    // bump when files in models/ change, so browsers refetch
 const load = src => loader.loadAsync(`${src}?v=${MODEL_V}`).then(g => {
   const m = g.scene;
   m.traverse(o => { if (o.isMesh) { o.geometry.computeVertexNormals(); o.material = shadeMat; } });
