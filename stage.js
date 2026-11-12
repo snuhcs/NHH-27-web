@@ -2,7 +2,8 @@
 // Each view renders its model into two tiny offscreen targets per frame:
 // (1) lit shading -> glyph density, (2) normals+depth -> edges. Edges become directional glyphs,
 // fill is split into colour tones by brightness and depth (see stage.css).
-// The main view cycles research topics with a scramble-in / scramble-out ("dararak") transition;
+// The main view cycles research topics with a scramble-in / scramble-out ("dararak") transition
+// (click to skip ahead);
 // small bust views of the three professors float around it.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -155,19 +156,16 @@ const pose = (v, a, now, phase = 0) => {
 
 // --- DOM ---
 const root = document.getElementById('stage');
-root.innerHTML = '<div class="stage__canvas" aria-hidden="true">'
-  + BUSTS.map((b, i) => `<figure class="stage__bust b${i}" hidden><div class="stage__bust-view"></div>`
+root.innerHTML = '<div class="stage__canvas" role="button" tabindex="0">'
+  + BUSTS.map((b, i) => `<figure class="stage__bust b${i}" aria-hidden="true" hidden><div class="stage__bust-view"></div>`
     + `<figcaption>${b.name}<span>${b.lab}</span></figcaption></figure>`).join('')
-  + '</div><div class="stage__meta"><p class="stage__label" aria-live="polite"></p><div class="stage__dots"></div></div>';
-const main = makeView(root.querySelector('.stage__canvas'));
-const labelEl = root.querySelector('.stage__label');
-const dots = ASSETS.map((a, i) => {
-  const b = document.createElement('button');
-  b.className = 'stage__dot'; b.type = 'button'; b.setAttribute('aria-label', `${i + 1}. ${a.label}`);
-  b.onclick = () => go(i);
-  root.querySelector('.stage__dots').append(b);
-  return b;
-});
+  + '</div>';
+const canvas = root.querySelector('.stage__canvas');
+const main = makeView(canvas);
+// click / Enter / Space skips to the next topic (plays the scramble-out first)
+const next = () => { if (reduce) go(idx + 1); else if (phase !== 'out') { phase = 'out'; t0 = performance.now(); } };
+canvas.addEventListener('click', next);
+canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); } });
 const models = ASSETS.map(a => load(a.src));
 const busts = BUSTS.map((b, i) => {
   const fig = root.querySelector(`.stage__bust.b${i}`);
@@ -182,21 +180,9 @@ async function show(i) {
   const m = await models[i];
   if (i !== idx) return;
   main.setModel(m);
-  scramble(ASSETS[i].label);
-  dots.forEach((d, k) => d.toggleAttribute('aria-current', k === i));
+  canvas.setAttribute('aria-label', `연구 주제: ${ASSETS[i].label}. 누르면 다음 주제`);
 }
 function go(i) { idx = (i + ASSETS.length) % ASSETS.length; phase = 'in'; t0 = performance.now(); show(idx); }
-
-function scramble(text) {
-  if (reduce) { labelEl.textContent = text; return; }
-  const start = performance.now();
-  (function step(now) {
-    const p = Math.min(1, (now - start) / 700);
-    labelEl.textContent = [...text].map((c, i) => c === ' ' || i / text.length < p ? c
-      : NOISE[(Math.random() * NOISE.length) | 0]).join('');
-    if (p < 1) requestAnimationFrame(step);
-  })(start);
-}
 
 function frame(now) {
   requestAnimationFrame(frame);

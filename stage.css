@@ -1,16 +1,16 @@
 /* ASCII 3D showcase — stacked glyph layers: near/far tone bands, edges, transition noise.
-   The host sizes #stage; the glyph canvas fills it above a label/dots row. */
+   The host sizes #stage; the glyph canvas fills it. */
 .stage {
   /* tones: each layer mixes lo->hi by its --k (0..1 = brightness band); near = bright, far = dimmer blue */
   --stage-edge: #ffffff;
   --stage-near-lo: #3c47b8; --stage-near-hi: #ffffff;
   --stage-far-lo: #262c86;  --stage-far-hi: #a9b3ff;
   --stage-noise: #8d98ff;
-  --stage-far: var(--orange, #ffb27a);
   --stage-font: 400 7px/8px ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
-  display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; min-height: 0;
+  display: grid; min-height: 0;
 }
-.stage__canvas { position: relative; min-height: 0; overflow: hidden; }
+.stage__canvas { position: relative; min-height: 0; overflow: hidden; cursor: pointer; }
+.stage__canvas:focus-visible { outline: 1px dashed rgba(255, 255, 255, .5); outline-offset: 4px; }
 .stage__layer {
   position: absolute; inset: 0; margin: 0;
   font: var(--stage-font); letter-spacing: 0; white-space: pre; text-align: left; user-select: none;
@@ -19,12 +19,6 @@
 .stage__layer.far { color: color-mix(in oklab, var(--stage-far-hi) calc(var(--k) * 100%), var(--stage-far-lo)); }
 .stage__layer.edge { color: var(--stage-edge); font-weight: 700; }
 .stage__layer.noise { color: var(--stage-noise); }
-.stage__meta { display: grid; justify-items: center; gap: 10px; }
-.stage__label { margin: 0; font: 400 13px/1 ui-monospace, Consolas, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--stage-edge); min-height: 1em; }
-.stage__dots { display: flex; gap: 8px; }
-.stage__dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .28); cursor: pointer; transition: width .3s, background .3s; }
-.stage__dot[aria-current] { width: 22px; border-radius: 4px; background: var(--stage-far); }
-.stage__dot:focus-visible { outline: 2px solid var(--stage-far); outline-offset: 3px; }
 
 /* professor busts: small ASCII views floating around the main one */
 .stage__bust[hidden] { display: none; }
