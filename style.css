@@ -91,18 +91,25 @@ main {
 .people > li:hover .tags li { border-color: var(--orange); background: color-mix(in srgb, var(--orange) 14%, #fff); }
 
 .tentative { font-size: 13px; color: var(--mute); text-align: center; }
-.days { width: 100%; max-width: 1000px; margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px 56px; }
-.day h3 { display: flex; align-items: baseline; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); font: 400 14px/1.4 var(--display); color: var(--mute); }
+.days { width: 100%; max-width: 1000px; margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 40px clamp(32px, 5vw, 56px); }
+.day h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); font: 400 14px/1.4 var(--display); color: var(--mute); }
 .day h3 b { font: 300 28px/1 var(--display); color: var(--navy); text-transform: uppercase; }
 .day li:hover time { color: var(--orange-ink); }
 .day li { display: grid; grid-template-columns: 64px 1fr 24px; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .day time { font: 400 14px/1 var(--display); color: var(--mute); font-variant-numeric: tabular-nums; }
-.day span { font-weight: 500; }
+.day span { font-weight: 500; min-width: 0; }
 .day small { font-weight: 400; color: var(--mute); margin-left: 6px; }
 .ico { width: 20px; height: 20px; background: var(--navy); opacity: .7; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
 .ico.talk { --m: url(img/i-talk.webp); }
 .ico.meal { --m: url(img/i-meal.webp); }
 .ico.board { --m: url(img/i-poster.webp); }
+@media (max-width: 560px) {
+  .day h3 b { font-size: 24px; }
+  .day li { grid-template-columns: 50px 1fr 20px; gap: 10px; padding: 12px 0; }
+  .day time { font-size: 13px; }
+  .day small { display: block; margin: 2px 0 0; font-size: 13px; }
+  .ico { width: 18px; height: 18px; }
+}
 
 .site-foot { padding: 96px var(--gutter) 28px; display: grid; gap: 28px; }
 .site-foot > div:first-child { font-size: 14px; text-align: center; }
